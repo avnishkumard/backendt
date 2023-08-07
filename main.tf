@@ -72,7 +72,7 @@ resource "aws_lb_listener_rule" "example_listener_rule" {
 
   condition {
     host_header {
-      values = [var.task_host_header_domain]
+      values = ["${var.task_host_header_domain}.centrae.com"]
     }
   }
 }
