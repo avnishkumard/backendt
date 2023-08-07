@@ -37,7 +37,7 @@ resource "aws_ecs_service" "task_service" {
   desired_count   = 1
 
   network_configuration {
-    subnets          = local.subnet_ids
+    subnets          = [local.subnet_ids]
     security_groups  = [aws_security_group.ecs_sec_group.id]
     assign_public_ip = false
   }
