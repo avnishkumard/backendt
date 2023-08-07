@@ -12,6 +12,9 @@ on:
       ecs_cluster:
         description: 'cluster'
         required: true
+      env_name:
+        description: 'cluster'
+        required: true
 
 jobs:
   deploy:
@@ -27,6 +30,7 @@ jobs:
           echo "ecs_service_name=${{ github.event.inputs.ecs_service_name }}" >> $GITHUB_ENV
           echo "task_host_header_domain=${{ github.event.inputs.task_host_header_domain }}" >> $GITHUB_ENV
           echo "ecs_cluster=${{ github.event.inputs.ecs_cluster }}" >> $GITHUB_ENV
+          echo "env_name=${{ github.event.inputs.env_name }}" >> $GITHUB_ENV
       - name: Create AWS credentials file
         run: |
           mkdir -p ~/.aws
@@ -49,6 +53,7 @@ jobs:
       - name: Terraform apply
         run: |
           terraform plan  \
-            -var "task_cpu=${{ env.ecs_service_name }}" \
-            -var "task_mem=${{ env.task_host_header_domain }}" \
-            -var "log_group_name=${{ env.ecs_cluster }}"
+            -var "ecs_service_name=${{ env.ecs_service_name }}" \
+            -var "task_host_header_domain=${{ env.task_host_header_domain }}" \
+            -var "ecs_cluster=${{ env.ecs_cluster }}" \
+            -var "env_name=${{ env.env_name }}"
