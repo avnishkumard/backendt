@@ -183,5 +183,5 @@ resource "aws_route53_record" "loadbalancer_cname" {
   name    = var.task_host_header_domain
   type    = "CNAME"
   ttl     = "300"
-  records = local.lb_arn
+  records = [local.lb_arn]
 }
