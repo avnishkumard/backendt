@@ -20,6 +20,12 @@ locals {
 locals {
   vpc_id = var.env_name == "prod" ? "vpc-065652c243d05599f" : "vpc-00b2f03fc8424e62c"
 }
+locals {
+  lb_arn = var.env_name == "prod" ? "Production-1288100872.us-west-2.elb.amazonaws.com" : "Non-Production-1546516192.us-west-2.elb.amazonaws.com"
+}
+locals {
+  listener_arn = var.env_name == "prod" ? "arn:aws:elasticloadbalancing:us-west-2:670015515275:loadbalancer/app/Production/609f806d98f51888" : "arn:aws:elasticloadbalancing:us-west-2:670015515275:listener/app/Non-Production/b0146169d825fc87/2bbb8a1721a1a531"
+}
 
 resource "aws_ecs_service" "task_service" {
   name            = var.ecs_service_name
@@ -57,7 +63,7 @@ resource "aws_lb_target_group" "example_tg" {
 }
 
 resource "aws_lb_listener_rule" "example_listener_rule" {
-  listener_arn = "arn:aws:elasticloadbalancing:us-west-2:670015515275:listener/app/Non-Production/b0146169d825fc87/2bbb8a1721a1a531"
+  listener_arn = local.listener_arn
   priority     = 100
 
   action {
@@ -171,4 +177,11 @@ resource "aws_ecr_lifecycle_policy" "ecr-repo-policy" {
     ]
     }
 EOF
+}
+resource "aws_route53_record" "loadbalancer_cname" {
+  zone_id = "Z0919146131B5POBHJLN9"
+  name    = var.task_host_header_domain
+  type    = "CNAME"
+  ttl     = "300"
+  records = local.lb_arn
 }
