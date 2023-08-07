@@ -15,7 +15,7 @@ variable "env_name" {
 }
 
 locals {
-  subnet_ids = var.env_name == 'prod' ? 'subnet-0ee4f9325bf6b6e00' : 'subnet-0ef8b2338c6558f58'
+  subnet_ids = var.env_name == "prod" ? "subnet-0ee4f9325bf6b6e00" : "subnet-0ef8b2338c6558f58"
 }
 locals {
   vpc_id = var.env_name == 'prod' ? 'vpc-065652c243d05599f' : 'vpc-00b2f03fc8424e62c'
