@@ -10,6 +10,10 @@ variable "prod_subnet_ids" {
 variable "task_host_header_domain" {
   description = "Name of task_host_header_domain"
 }
+variable "env_name" {
+  description = "Name of env_name"
+}
+
 locals {
   subnet_ids = var.env_name == "prod" ? 'subnet-0ee4f9325bf6b6e00' : 'subnet-0ef8b2338c6558f58'
 }
