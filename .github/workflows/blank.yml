@@ -10,15 +10,13 @@ on:
         description: 'Host name without centrae.com'
         required: true
       ecs_cluster:
-        description: 'ECS cluster'
+        description: 'ECS cluster Like UAT/Staging/Production'
         required: true
         default: 'staging'
-        options: ['staging', 'uat', 'production']
       env_name:
-        description: 'Environment'
+        description: 'Environment Like prod/non-prod'
         required: true
         default: 'prod'
-        options: ['prod', 'nonprod']
 
 
 jobs:
