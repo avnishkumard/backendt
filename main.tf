@@ -64,7 +64,6 @@ resource "aws_lb_target_group" "example_tg" {
 
 resource "aws_lb_listener_rule" "example_listener_rule" {
   listener_arn = local.listener_arn
-  priority     = 100
 
   action {
     type             = "forward"
@@ -86,7 +85,7 @@ resource "aws_security_group" "ecs_sec_group" {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = [local.vpc_id]
+    cidr_blocks = [local.vpc_id]
 
     #cidr_blocks = ["0.0.0.0/0"]
   }
