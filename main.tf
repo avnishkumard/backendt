@@ -52,11 +52,14 @@ resource "aws_ecs_service" "task_service" {
     ignore_changes = [desired_count]
   }
 }
+
 resource "aws_lb_target_group" "example_tg" {
   name     = var.ecs_service_name
   port     = 443
   protocol = "HTTPS"
   vpc_id   = local.vpc_id
+
+  target_type = "ip"  # Set the target type to "ip" for Fargate launch type
 }
 
 resource "aws_lb_listener_rule" "example_listener_rule" {
@@ -65,13 +68,15 @@ resource "aws_lb_listener_rule" "example_listener_rule" {
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.example_tg.arn
-  }   
-condition {
-        host_header {
-            values = ["${var.task_host_header_domain}"]
-        }
+  }
+
+  condition {
+    host_header {
+      values = [var.task_host_header_domain]
+    }
+  }
 }
-}
+
 resource "aws_security_group" "ecs_sec_group" {
   name        = var.ecs_service_name
   description = "Allow http inbound traffic from ALB"
