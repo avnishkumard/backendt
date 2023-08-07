@@ -128,7 +128,7 @@ resource "aws_ecs_task_definition" "ab_task" {
 }
 
 resource "aws_ecr_repository" "ecr-repo" {
-  name                 = '${var.ecs_service_name}-repo'
+  name                 = "${var.ecs_service_name}-repo"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
