@@ -1,3 +1,6 @@
+provider "aws" {
+  region = "us-west-2"  # Replace with your desired AWS region
+}
 variable "ecs_service_name" {
   description = "Name of the ecs_service_name"
 }
