@@ -4,17 +4,22 @@ on:
   workflow_dispatch:
     inputs:
       ecs_service_name:
-        description: 'ecs_service_name'
+        description: 'ecs service fullname'
         required: true
       task_host_header_domain:
-        description: '_domain'
+        description: 'Host name without centrae.com'
         required: true
       ecs_cluster:
-        description: 'cluster'
+        description: 'ECS cluster'
         required: true
+        default: 'staging'
+        options: ['staging', 'uat', 'production']
       env_name:
-        description: 'cluster'
+        description: 'Environment'
         required: true
+        default: 'prod'
+        options: ['prod', 'nonprod']
+
 
 jobs:
   deploy:
