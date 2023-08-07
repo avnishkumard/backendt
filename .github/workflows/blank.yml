@@ -1,0 +1,54 @@
+name: Terraform Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      ecs_service_name:
+        description: 'ecs_service_name'
+        required: true
+      task_host_header_domain:
+        description: '_domain'
+        required: true
+      ecs_cluster:
+        description: 'cluster'
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Prompt for input
+        id: prompt
+        run: |
+          echo "ecs_service_name=${{ github.event.inputs.ecs_service_name }}" >> $GITHUB_ENV
+          echo "task_host_header_domain=${{ github.event.inputs.task_host_header_domain }}" >> $GITHUB_ENV
+          echo "ecs_cluster=${{ github.event.inputs.ecs_cluster }}" >> $GITHUB_ENV
+      - name: Create AWS credentials file
+        run: |
+          mkdir -p ~/.aws
+          touch ~/.aws/credentials
+
+      - name: Configure AWS credentials
+        run: |
+          echo "[default]" >> ~/.aws/credentials
+          echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials
+          echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: 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
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Terraform apply
+        run: |
+          terraform plan  \
+            -var "task_cpu=${{ env.ecs_service_name }}" \
+            -var "task_mem=${{ env.task_host_header_domain }}" \
+            -var "log_group_name=${{ env.ecs_cluster }}"
