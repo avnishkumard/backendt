@@ -32,7 +32,7 @@ resource "aws_ecs_service" "task_service" {
     assign_public_ip = false
   }
   #iam_role        = local.ecsTaskExecutionRole_arn
-  depends_on = [local.ecsTaskExecutionRole_name]
+  depends_on = "ecsTaskstagingRole"
 
 
   load_balancer {
@@ -98,7 +98,7 @@ resource "aws_ecs_task_definition" "ab_task" {
   family                   = var.ecs_service_name
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-
+  execution_role_arn       = "arn:aws:iam::670015515275:role/ecsTaskstagingRole"
  
   container_definitions = jsonencode([
     {
