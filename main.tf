@@ -55,8 +55,8 @@ resource "aws_ecs_service" "task_service" {
 
 resource "aws_lb_target_group" "example_tg" {
   name     = var.ecs_service_name
-  port     = 443
-  protocol = "HTTPS"
+  port     = 80
+  protocol = "HTTP"
   vpc_id   = local.vpc_id
 
   target_type = "ip"  # Set the target type to "ip" for Fargate launch type
