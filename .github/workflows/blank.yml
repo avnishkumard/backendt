@@ -52,7 +52,7 @@ jobs:
 
       - name: Terraform apply
         run: |
-          terraform plan  \
+          terraform apply -auto-approve \
             -var "ecs_service_name=${{ env.ecs_service_name }}" \
             -var "task_host_header_domain=${{ env.task_host_header_domain }}" \
             -var "ecs_cluster=${{ env.ecs_cluster }}" \
