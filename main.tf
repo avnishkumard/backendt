@@ -32,7 +32,7 @@ resource "aws_ecs_service" "task_service" {
     assign_public_ip = false
   }
   #iam_role        = local.ecsTaskExecutionRole_arn
-  depends_on = "ecsTaskstagingRole"
+
 
 
   load_balancer {
