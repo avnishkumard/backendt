@@ -129,6 +129,7 @@ resource "aws_ecs_task_definition" "ab_task" {
           awslogs-stream-prefix = "ecs"
         }
       }
+        command =["/bin/sh","-c","ls -lah && php artisan vendor:publish --all && php artisan key:generate && php artisan jwt:secret && php artisan migrate && apache2-foreground"]
     }
   ])
 }
