@@ -47,7 +47,7 @@ resource "aws_ecs_service" "task_service" {
 
 }
 resource "aws_lb_target_group" "example_tg" {
-  name     = "var.ecs_service_name"
+  name     = var.ecs_service_name
   port     = 443
   protocol = "HTTPS"
   vpc_id   = local.vpc_id
@@ -68,7 +68,7 @@ condition {
 }
 }
 resource "aws_security_group" "ecs_sec_group" {
-  name        = var.sec_group_name
+  name        = var.ecs_service_name
   description = "Allow http inbound traffic from ALB"
 
   vpc_id = local.vpc_id
@@ -95,10 +95,10 @@ resource "aws_security_group" "ecs_sec_group" {
 resource "aws_ecs_task_definition" "ab_task" {
   cpu                      = 1024
   memory                   = 2048
-  family                   = ecs_service_name
+  family                   = var.ecs_service_name
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  execution_role_arn       = local.ecsTaskExecutionRole_arn
+
  
   container_definitions = jsonencode([
     {
