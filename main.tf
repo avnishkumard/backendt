@@ -26,7 +26,9 @@ locals {
 locals {
   listener_arn = var.env_name == "prod" ? "arn:aws:elasticloadbalancing:us-west-2:670015515275:loadbalancer/app/Production/609f806d98f51888" : "arn:aws:elasticloadbalancing:us-west-2:670015515275:listener/app/Non-Production/b0146169d825fc87/2bbb8a1721a1a531"
 }
-
+locals {
+  sg_grp = var.env_name == "prod" ? "sg-026b709c6b20648f7" : "sg-06b4f64530a19cea1"
+}
 resource "aws_ecs_service" "task_service" {
   name            = var.ecs_service_name
   cluster         = var.ecs_cluster
@@ -85,8 +87,7 @@ resource "aws_security_group" "ecs_sec_group" {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    cidr_blocks = [local.vpc_id]
-
+    security_groups = [local.sg_grp]
     #cidr_blocks = ["0.0.0.0/0"]
   }
 
