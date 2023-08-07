@@ -37,17 +37,13 @@ resource "aws_ecs_service" "task_service" {
   desired_count   = 1
 
   network_configuration {
-
-    subnets          = [local.subnet_ids]
+    subnets          = local.subnet_ids
     security_groups  = [aws_security_group.ecs_sec_group.id]
     assign_public_ip = false
   }
-  #iam_role        = local.ecsTaskExecutionRole_arn
-
-
 
   load_balancer {
-    target_group_arn =  aws_lb_target_group.example_tg.arn
+    target_group_arn = aws_lb_target_group.example_tg.arn
     container_name   = var.ecs_service_name
     container_port   = 80
   }
@@ -55,7 +51,6 @@ resource "aws_ecs_service" "task_service" {
   lifecycle {
     ignore_changes = [desired_count]
   }
-
 }
 resource "aws_lb_target_group" "example_tg" {
   name     = var.ecs_service_name
@@ -143,41 +138,40 @@ resource "aws_ecr_repository" "ecr-repo" {
   }
 }
 
+
 resource "aws_ecr_lifecycle_policy" "ecr-repo-policy" {
   repository = aws_ecr_repository.ecr-repo.name
 
-  policy = <<EOF
-{
-    "rules": [
-        {
-            "rulePriority": 1,
-            "description": "Keep last 30 images",
-            "selection": {
-                "tagStatus": "tagged",
-                "tagPrefixList": ["latest"],
-                "countType": "imageCountMoreThan",
-                "countNumber": "20"
-            },
-            "action": {
-                "type": "expire"
-            }
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority: 1,
+        description: "Keep last 30 images",
+        selection: {
+          tagStatus: "tagged",
+          tagPrefixList: ["latest"],
+          countType: "imageCountMoreThan",
+          countNumber: 20,
         },
-        {
-            "rulePriority": 2,
-            "description": "Expire untagged images older than 14 days",
-            "selection": {
-                "tagStatus": "untagged",
-                "countType": "sinceImagePushed",
-                "countUnit": "days",
-                "countNumber": "14"
-            },
-            "action": {
-                "type": "expire"
-            }
-        }
-    ]
-    }
-EOF
+        action: {
+          type: "expire",
+        },
+      },
+      {
+        rulePriority: 2,
+        description: "Expire untagged images older than 14 days",
+        selection: {
+          tagStatus: "untagged",
+          countType: "sinceImagePushed",
+          countUnit: "days",
+          countNumber: 14,
+        },
+        action: {
+          type: "expire",
+        },
+      },
+    ],
+  })
 }
 resource "aws_route53_record" "loadbalancer_cname" {
   zone_id = "Z0919146131B5POBHJLN9"
