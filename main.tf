@@ -4,9 +4,6 @@ variable "ecs_service_name" {
 variable "ecs_cluster" {
   description = "Name of the ecs_cluster"
 }
-variable "prod_subnet_ids" {
-  description = "Name of the ecs_cluster"
-}
 variable "task_host_header_domain" {
   description = "Name of task_host_header_domain"
 }
