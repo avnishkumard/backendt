@@ -13,7 +13,9 @@ variable "task_host_header_domain" {
 variable "env_name" {
   description = "Name of env_name"
 }
-
+locals {
+service_name = "${var.ecs_cluster$}-{var.ecs_service_name}-ecs-service"
+}
 locals {
   subnet_ids = var.env_name == "prod" ? "subnet-0ee4f9325bf6b6e00" : "subnet-0ef8b2338c6558f58"
 }
@@ -30,7 +32,7 @@ locals {
   sg_grp = var.env_name == "prod" ? "sg-026b709c6b20648f7" : "sg-06b4f64530a19cea1"
 }
 resource "aws_ecs_service" "task_service" {
-  name            = var.ecs_service_name
+  name            = local.service_name
   cluster         = var.ecs_cluster
   task_definition = aws_ecs_task_definition.ab_task.arn
   launch_type     = "FARGATE"
@@ -44,7 +46,7 @@ resource "aws_ecs_service" "task_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.example_tg.arn
-    container_name   = var.ecs_service_name
+    container_name   = local.service_name
     container_port   = 80
   }
 
@@ -54,7 +56,7 @@ resource "aws_ecs_service" "task_service" {
 }
 
 resource "aws_lb_target_group" "example_tg" {
-  name     = var.ecs_service_name
+  name     = local.service_name
   port     = 80
   protocol = "HTTP"
   vpc_id   = local.vpc_id
@@ -78,7 +80,7 @@ resource "aws_lb_listener_rule" "example_listener_rule" {
 }
 
 resource "aws_security_group" "ecs_sec_group" {
-  name        = var.ecs_service_name
+  name        = local.service_name
   description = "Allow http inbound traffic from ALB"
 
   vpc_id = local.vpc_id
@@ -104,7 +106,7 @@ resource "aws_security_group" "ecs_sec_group" {
 resource "aws_ecs_task_definition" "ab_task" {
   cpu                      = 1024
   memory                   = 2048
-  family                   = var.ecs_service_name
+  family                   = local.service_name
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   execution_role_arn       = "arn:aws:iam::670015515275:role/ecsTaskstagingRole"
@@ -112,7 +114,7 @@ resource "aws_ecs_task_definition" "ab_task" {
   container_definitions = jsonencode([
     {
 
-      name         = var.ecs_service_name
+      name         = local.service_name
       image        = "${aws_ecr_repository.ecr-repo.repository_url}:latest"
       cpu          = 512
       memory       = 1024
@@ -135,7 +137,7 @@ resource "aws_ecs_task_definition" "ab_task" {
 }
 
 resource "aws_ecr_repository" "ecr-repo" {
-  name                 = "${var.ecs_service_name}-repo"
+  name                 = "${local.service_name}-repo"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
